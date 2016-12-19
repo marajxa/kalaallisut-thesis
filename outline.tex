@@ -1,0 +1,711 @@
+\documentclass[12pt]{article}
+
+\usepackage[backend=biber,style=authortitle,citestyle=authoryear,natbib]{biblatex}
+\usepackage{listings}
+\usepackage{tipa}
+\usepackage{threeparttable}
+\usepackage{tabu}
+\usepackage{makecell}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage[margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{vowel}
+\usepackage{covington}
+\usepackage{gb4e}
+\usepackage{mathptmx}
+\noautomath
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\graphicspath{ {images/} }
+\renewcommand*\footnoterule{}
+
+\title{\vspace{-2cm}A Guide to Building a Diphone Speech Synthesis System for Kalaallisut\footnote{I would like to thank Professor Jane Chandlee for her constructive comments and assistance throughout the process of writing this thesis. Kalina Kostyszyn and Samantha Kacir provided valuable feedback on earlier drafts, and I am grateful to them both as well.}}
+\author{Sophie M. Rehrig}
+\date{{\small\parbox{\linewidth}{\centering
+A thesis submitted in partial fulfillment of the requirements for the degree of Bachelor of Arts in Linguistics\endgraf\bigskip
+Bryn Mawr College \endgraf
+December 2016}}}
+
+\addbibresource{draft.bib}
+
+\setlength{\parskip}{1.3em}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+Diphone speech synthesis is the process of creating an artificial voice capable of converting text input to vocalized speech by means of concatenating diphones. While compared to unit selection, the most popular modern method of speech synthesis, diphone synthesis suffers from naturalness problems, it requires fewer recorded segments and thus fewer resources and less memory. In this thesis I will present a guide to constructing a diphone speech synthesis system for Kalaallisut, the national language of Greenland. I will also discuss the importance of these systems, and the need for resources that will allow members of marginalized speech communities to construct such tools themselves. \par
+\end{abstract}
+
+\newpage
+
+\singlespacing
+\tableofcontents
+\doublespacing
+
+\newpage
+
+\section{Introduction}
+
+Text-to-speech systems, which take in strings of orthographic text and output auditory speech, present a solution to a broad range of problems in today's world, and are used in a variety of situations, such as assistive technology, educational toys, and automated help lines. Advances in research mean that these systems are becoming more and more natural, and even better suited for a wide variety of applications. However, much of the work on these systems is restricted to the major languages of the world, such as the languages of European colonial powers and East Asian economic powers. Thousands of languages have no synthetic voice, let alone an entire text-to-speech system, while other languages may have a system, but of poor quality. This thesis presents a guide for building a text-to-speech system for Kalaallisut, or West Greenlandic. While most academic writing uses the latter name, I have elected to use the former, used by both the speech community itself and in the ISO codes, throughout this paper. Kalaallisut currently has a system built by \citet{de_speech} from German speech for research purposes. It therefore lacks many of the phonemes of Kalaallisut, in particular the uvulars, making it a poor candidate for any practical use. In addition, it is unavailable to the general public save for a few sample outputs. \par
+
+I begin in \S 2 by illustrating the deficit of intelligible, portable text-to-speech systems, and, in laying out my rationale for my approach, I advocate for meeting this need. In \S 3 I first introduce the general field of speech synthesis, briefly describing the various methods that may be used before proceeding into a more in depth discussion of the method to be used in this case, that of diphone synthesis. I then examine previous work done on languages without a large research base. \S 4 contains phonetic and prosodic information about Kalaallisut, including some discussion of major unique features which will present special difficulty. In \S 5 I present the information necessary for the actual creation of the system, such as the list of diphones, other segments included and justification for straying from the purely diphone path, rules for converting the orthography to a phonetic representation, and rules for applying prosody. In \S 6 I conclude the paper by presenting the steps needed to make this theoretical system into a reality, and proposing a method to increase the production of diphone synthesis systems for indigenous and/or threatened languages. \par
+
+\section{Justification for a Making New System}
+
+\citet{crystal} suggests that there are six conditions that can reverse language decline, naming as the sixth of these the ability of the language community to use modern technology. \citet{endng} also identifies the melding of linguistic heritage and modern technology as critical, noting the increasing number of websites and applications dedicated to minority languages and increasing use of those languages on social media as key to their survival or revival. Michelle Judy Whitstone, one of the voices for the Rosetta Stone Navajo project, said in the video made about the product, ``[Navajo] will begin to diminish if we don't use it anymore, and the only way, sadly, to keep it alive is through modern technology, because that's what kids are interested in doing. That's what is appealing to the younger generation, is what's on the big screen.'' Whitstone is expressing a variation on the popular sentiment that children are obsessed with technology, that it is essential to include the Navajo language in modern technology if Navajo children are to learn it, and to use it. \par
+
+While some technological services, like the Firefox web browser, do have language options for some minority languages, others, like the Windows operating system and its associated browsers Internet Explorer and Microsoft Edge largely include only national or majority languages. Therefore, speakers of languages unavailable through these services are required to use a majority language if they wish to navigate a computer or the Internet. In many cases, the speakers of this majority language sought to actively discourage use of the minority language not too long ago, so presenting as diverse a set of language options as possible has importance. \par
+
+Combining these facts about the limitations in language availability, the data connecting language use and language competence, and Whitstone's comment about the increasing prevalence of technology in the modern life, one solution to the decreasing use of a heritage language by community members would be to increase the availability of that language as the primary language for an application. Making a Kalaallisut GPS, for example, would expose community members to directional words. Making a Navajo language version of the Windows operating system would allow the speaker grandparents to teach their grandchildren Navajo, as the grandchildren teach their grandparents computer literacy. \par
+
+However, one must be careful to not let desire to increase language use and awareness cross into a paternalistic savior attitude. \citet{endng} describes how in 2006, the indigenous Mapuche people of Chile planned to sue Microsoft for translating Windows into the (non-endangered) Mapuzugun language. Microsoft responded that they were only trying to help, but to the Mapuche, it felt like Microsoft was saying they were incapable of connecting their modern lives and their language themselves. Mapuche leader Aucan Huilcan said to \citet{ms_news}, ``We feel like Microsoft and the Chilean Education Ministry have overlooked us by deciding to set up a committee without our consent, our participation and without the slightest consultation.'' One possible way to avoid a repeat of such a situation is to make sure the language communities have the resources to implement such applications in their languages themselves, as discussed at the end of this paper. \par
+
+\section{Text-to-Speech Systems}
+
+Speech synthesis  GPS voices, personal assistants such as Siri and Cortana, the speaking feature of Google Translate, and automated banking phone lines all make use of such systems.  Generally, a system is specialized to a single language. However, there are now some research efforts into multilingual systems and systems which are built partially off of those for other languages, to better cover the breadth of the world's languages.\par
+
+	\subsection{History}
+
+	Artificial speech synthesis began as a mechanical endeavor, the history of which \citet{old_flanagan} briefly describes. Kratzenstein in 1779 built a machine capable of producing five different vowels. From 1769 to 1791, von Kempelen worked on a machine which could produce consonants, which varied in place and manner of articulation. Riesz built a mechanism with a reed and various keys that were pressed to simulate the constriction of the human vocal tract. His machine was capable of producing some words. \par
+
+	After the mechanical systems came the electric ones, which are contemporary with \citet{old_flanagan}. These depended on the use of electric energy as the source of speech sound and of circuitry and similar manipulation to modify the acoustic signal of the electric energy into an approximation of human speech. These types of systems are used today under the name of articulatory synthesis. \par
+
+	\subsection{Modern Systems}
+
+	Generally, modern TTS systems have two components, as described in \citet{ox-handbook}: a natural language processing component, which creates a regular transcription containing necessary phonetic, intonational, and rhythmic information from the input; and a digital signal processing component, which converts the information from the natural language processing stage into acoustic speech. Within the natural language processing stage there are four steps according to \citet{ox-handbook}. Firstly, as laid out in \citet{slp} the text is initially tokenized into sentences during text normalization or preprocessing, and then the segments of the input that are non-standard words, such as numerals, abbreviations, and acronyms, are  expanded into words. Secondly, in morphosyntactic analysis, as described in \citet{ox-handbook}, all possible parts of speech are proposed for each word before the text is analyzed contextually, to eliminate some part of speech possibilities, in order to allow the syntactic-prosodic parser to develop a hierarchical sentence structure to aid in prosodic determination later in the process. After morphosyntactic analysis, the text undergoes a phonetization process, also called letter-to-sound or grapheme-to-phoneme, in which the orthographic text is given a phonetic representation. This can be accomplished for some languages with the aid of pronouncing dictionaries, but for all languages there are words not found in these dictionaries that too must be resolved, either by using handwritten rules or by training a machine learning algorithm. In addition, some languages do not have lexicons or pronouncing dictionaries available. Finally, the now-phonetized text is analyzed once more, this time for prosody, to predict prosodic structure, prosodic prominence, and tune. \par
+
+	For some types of synthesis (including diphone), \citet{slp} note, duration and F0 (a measure of how rapidly the glottis is moving) are also predicted at this stage. Previously, hand-written rules were used to predict contextual variation in duration, though the current trend is towards statistical or machine learning methods. As \citet{slp} note, however, some machine learning methods use older hand-written rules to determine identifying features to be included. To predict F0 values for each segment, target points for each pitch accent and boundary tone (discussed below in \S 3.4.1) are first found, and then used to predict the contour for the rest of the sequence. \par
+
+	At this stage, the process diverges depending on the type of synthesis in use. The main options currently, as listed by \citet{slp}, are formant synthesis; articulatory synthesis; and concatenative synthesis, which has the subcategories of unit-selection and diphone. Most commercial text-to-speech systems use concatenative synthesis. In recent years, the trend within concatenative synthesis has been towards unit-selection, as when not limited by data or memory, it is currently the method which produces speech sounding most similar to natural human speech. In this form, multiple copies of each unit are stored in a database, and the best match for each situation is chosen. Acoustic properties of the segment are not artificially modified. Formant synthesis constructs artificial waveforms using mathematical models. Values of the relevant formants are calculated based on the phone and its environment. The benefits of this method include that it does not require storage for recorded human speech segments. However, at this time it sounds unnatural and sometimes unintelligible. Concatenative synthesis, in contrast, uses segments of natural human speech strung end to end, and thus achieves a much higher naturalness, at the cost of requiring a not insignificant amount of storage. \par
+
+	\subsection{Diphone Synthesis}
+
+	Diphone synthesis is a kind of concatenative synthesis in which the unit of concatenation is the diphone. A diphone is composed of two adjacent partial phones. The middle of a phone is the most stable across environments, with most influence from neighboring phones occurring at the boundaries of the phone under consideration, so by taking the second half of the first phone and the first half of the second phone, the theory is that the effect of the neighboring phone is at least somewhat captured, and the joins will occur at the point of least variability. \par
+
+	To compensate for the lack of options resulting from having but one copy of each segment, pitch and duration are modified to increase the intelligibility and naturalness of the synthesized speech. One common algorithm for carrying out this task is called Time-Domain Pitch-Synchronous OverLap-and-Add, or TD-PSOLA. In a pitch-synchronous algorithm, an action is taken during each pitch period, also known as an epoch. Epochs are detected either by physically monitoring the vibration of the glottis during speech recording, or by detection on recorded speech afterwards. Once there exists a corpus with labeled epochs, a windowed frame is extracted from each epoch. This frame is then used to modify the pitch and duration of its respective epoch, before all the signals are recombined. For example, to lengthen a segment, the frame will be copied. To increase pitch, frames are overlapped, and then extra frames are added to return the segment to its previous length. \par
+
+	In a strict interpretation of diphone synthesis, a single copy of each diphone, including diphones where one of the phones is silence, is cut from recorded utterances and stored. To create continuous speech the diphone segments are first modified in pitch and length based on the results of the prosodic analysis, and then strung together. While generally this method works to capture most of the relevant allophonic variation, in some cases influence from phones which are not immediate neighbors has a pronounced effect. In the context of diphone synthesis, the effect of this influence is negative, as the diphone model will not capture it, lending a choppy or generally unnatural quality to the synthesized speech. Modified diphone systems may thus include a few copies of certain diphones, for which influence from beyond the boundaries of the diphone is great enough to warrant the extra space required in storage.\par
+
+	\citet{slp} point out two main areas where diphone synthesis suffers relative to unit-selection synthesis. Firstly, these systems have a limited grasp on coarticulation because of the fact that by definition a true diphone system will only capture effects on immediately neighboring phonemes. Secondly, the segments are distorted by the necessity of modifying them for length and pitch. Therefore, compared to a unit-selection system, a diphone system will sound to the listener less natural and more recognizable as an artificial voice. Such a lack of naturalness is not so much a problem in applications such as the use of artificial voices at crosswalks or on automated call lines, for which the primary aim is that the voice be intelligible. However, problems arise when the voice is being used as a voice for someone who cannot speak, or to read out personal correspondence to someone who cannot read it themselves, as the robotic nature reminds the speaker or listener that the voice is artificial. \par
+
+	Despite this issue with diphone synthesis, I believe it to be the best choice for situations such as are discussed in this paper. Unit-selection systems, in order to be able to select a segment, must by definition store multiple copies of each segment in memory. Diphone systems, therefore, are much smaller, which is necessary for using text-to-speech systems in applications on devices that both do not have much storage and do not have cheap and/or reliable signals to an outside storage bank, a not unlikely scenario for speakers of many of the world's languages, who may lack high capacity devices, regular and reliable access to the Internet, or both. In addition, in order to have multiple copies, more time must be spent recording, which is difficult to achieve in isolated communities.\par
+
+	Another solution to the problem of memory could be to put more research into new methods in the hopes of developing a method more natural than diphone synthesis or formant synthesis, but less resource intensive than unit-selection synthesis. Such a system could be valuable in the future; however, I believe there is importance to increasing the quantitative output in the present, rather than waiting for technology to progress. While Kalaallisut is not in danger of disappearing soon, many languages are critically endangered now, and working to get the resources for creating technological tools into the hands of community members is not a task that can wait on advances in theory. \par
+
+	\subsection{Commonly Used Tools}
+
+		\subsubsection{ToBI}
+		The ToBI (Tone and Break Indices) model, developed by \citet{tobi} and described by \citet{slp}, represents an utterance as a sequence of intonational phrases. Each phrase ends in one of four boundary tones, and each word within a phrase has the option to be associated with one of five pitch accents. The intonational phrases can furthermore be broken down into intermediate phrases, which can also receive a boundary tone. The decomposition of intonational phrases into intermediate phrases is one of part ToBI's system of break indices. The strongest breaks (break index 4) are found between intonational phrases, and the next level (break index 3) is that of the intermediate phrases. Phrase index 1 is used for a standard word boundary, and phrase index 2 for a break between that of an intermediate phrase and a word boundary. \par
+
+		ToBI was designed for use with English utterances, but has been modified and adapted for use with other languages, such as J\_TOBI for Japanese. It is also used in its original form when no other tool is available, as seen in the example of \citet{mongolian}. \par
+
+		\subsubsection{Festival and Festvox}
+		Festival is free software developed by \citet{festival} at the University of Edinburgh which provides a framework for building speech synthesis systems, and a few example systems, such as for English and Welsh. It is written in C++ and includes a Scheme-based command interpreter to give the user more control. This also allows users with varying levels of comfort in the technology to utilize the software. \par
+
+		Festvox, developed by \citet{festvox} at Carnegie Mellon University, meant to streamline the process of creating a new voice in Festival, and thus open up the field to those who might not otherwise contribute. The project also aims to increase the available documentation of artificial voices. The goal is that anyone who wishes to build a voice for any language will be able to do so. \par
+
+		\subsubsection{MRBOLA}
+		MRBOLA, a project run by the TCTS Lab at the Facult\'e Polytechnique de Mons, aims to collect and provide for non-commercial use diphone sets for as many languages as possible. The stated goal is to provide materials for academic research on speech synthesis, especially on prosody generation. MRBOLA uses a variation on TD-PSOLA called MBR-PSOLA (Multi-Band Re-synthesis Pitch-Synchronous OverLap-Add), which is described in \citet{four_cand}. It is not a text to speech system, as it is not capable of taking in raw text, but it is able to take in phonetic and prosodic information and output synthesized speech. \par
+
+	\subsection{Relevant Previous Work}
+
+		Some previous work has been done with creating diphone synthesis systems for languages lacking text-to-speech technologies. Here, I describe a few, and also mention projects aimed at increasing access to such systems. \par
+
+		\subsubsection{Mongolian}
+
+		\citet{mongolian} created a diphone system for the Halh or Khalkha dialect of Mongolian. Halh Mongolian is the national language of Mongolia, with about three million speakers in total, including some in adjacent provinces of China and Russia. Some researchers before this group had explored parts of the problem of creating a text-to-speech system for Mongolian, but none had done all the work required to actually build one, making theirs the first one. \par
+
+		Particular challenges with which they had to contend included homograph disambiguation and phone duration. The first could be partially resolved by part of speech tagging, and the second by using a machine learning algorithm on a dataset of spoken Mongolian to train a prediction tool. As Kalaallisut seems to have no homographs, the first will not be an issue for me. I also do not anticipate experiencing trouble with phone duration, as while in Mongolian phone length is extremely contextual and must be analyzed statistically, in Kalaallisut phones duration is clearly marked as long or short, save in the cases of the consonant clusters, and thus will require less analysis. Prosody in Mongolian can be predicted with good results from punctuation. They used the CART (classification and regression trees) model, a type of machine learning method developed by \citet{cart} for creating predictions from data, to predict prosodic phrase structure and mark ToBI accents and an F0 contour. However, as there is no version of ToBI specifically for Mongolian, the team used the English model, which could yield incorrect results.\par
+
+		They created the system using Festival and tested it for intelligibility and naturalness on native speakers. The system performed well on measures of intelligibility in most cases, but was not considered particularly natural. Neither, however, was it particularly unnatural. \par
+
+		\subsubsection{Arabic}
+		Unlike \citet{mongolian}, \citet{Arabic-Festival} had existing synthetic voices in her language to work with. However, she had the special challenge of working with a system in which most vowels are not written. There are existing prediction tools for filling in the missing vowels, but none is accurate enough for speech synthesis. In the end, for her system, she used a romanized transcription system of her own design, and sidestepped the vowel issue by simply including vowels in her input. However, if the public is to be able to use this system, there will need to be a different solution, as there is no widely used standard romanization of Arabic. Another difficulty she encountered was with the gender of words. As some utterances in Arabic are marked for if the speaker is a man or a woman, care must be taken to make sure the text is always output in the correctly gendered voice, to prevent a jarring sensation to the listener. \par
+
+		She tested the voice she made on nine native speakers, and evaluated the system to be 85\% intelligible and 59\% natural. Furthermore, 78\% of listeners thought the speed was correct, but also 78\% found the voice at least a little annoying to listen to. The result about annoyingness is especially important to consider for any system meant to be used as part of a language revitalization program, as learners will be unlikely to make use of technology which they find unpleasant to listen to, or difficult to bear for extended periods of time. \par
+
+		\subsubsection{Somali}
+
+		Unlike the Mongolian and Arabic examples above, \citet{faking} do not create a whole diphone system for Somali. Instead, as \citet{de_speech} does, they ``fake'' a Somali text to speech system by using German language diphones. They substituted the closest German equivalents for the phonemes missing in Somali, losing some phonemic contrasts in the process. They also ran into difficulties as Somali is a pitch accent language, with contrastive tone, such that the words for `boy' and `girl' vary only by whether the stress is on the first vowel or the second. They chose not to take this into account in the voice, and rather to trust context to provide any lost meaning. \par
+
+		For their purposes, the system was acceptable. Their primary goal was to create a system that could be used by immigrants who had not yet learned their new country's language or languages when they visit the doctor, and in this context were moderately successful, with 72\% of their test group who were not wearing headphones able to understand after three repetitions, and 91\% of those wearing headphones after the same number. In the context of a doctor's office visit, it is feasible to listen with headphones in a relatively quiet space, so the results for the conditions with headphones represent what the system is capable of. However, as this system is meant to be used alongside machine translations, one wonders how the errors introduced by a machine translator would affect the comprehensibility of what is already a very context dependent system. For testing, in contrast, they used grammatical Somali.\par
+
+\section{Kalaallisut}
+
+Kalaallisut is an Eskimo-Aleut language spoken on the western coast of the island of Greenland, with, according to \citet{ethnologue}, about 43,000 speakers in Greenland, and 7,000 in Denmark. It is by far the largest of the three major dialects of Greenlandic, and is the national language of Greenland, and the language of primary education there. It is on the eastern part of the language continuum of the Inuit languages, which are also present in Canada and Alaska. \par
+
+While Kalaallisut is not a minority language, as a national language, it was nevertheless chosen for this project. It is one of the most widely spoken indigenous languages of North America today, and one of the few to have a standard form and standardized orthography. Additionally, as it is taught in schools in Greenland, it is more likely that speakers are able to write in the standardized orthography than with a language such as Navajo, which possesses such an orthography, but few speakers who have the ability to write it. Kalaallisut, in contrast, has a population highly literate in the standard orthography. This saves this project from the problem of creating a grapheme to phoneme conversion able to deal with personal transcription systems. \par
+
+The large number of speakers for a single dialect of an indigenous language in North America is also unusual. I did not feel it was my place to be making decisions among dialectal differences, and thus imposing my view of what a standard form should be upon a language to which I have no connection, and therefore would have had to have chosen a very specific variety of any other language. In addition to the scarcity of materials about small dialects, it is also not my place to choose one variety of the language as the one that receives new resources and attention, as this could very well also become an attempt to establish a standard. This restricted me to a few languages. Kalaallisut was the one I felt most comfortable working with ex-situ, as it is a national language, unlike indigenous languages of the United States. \par
+
+	\subsection{Phoneme Inventory}
+
+	According to \citet{grammar}, Kalaallisut has 13 or 14 distinctive consonants and three vowels, three or four additional marginal consonants, and two optionally inserted glides. For the purposes of this system, I have chosen to leave out the optional glides. The consonant inventory includes fricatives, nasals, voiceless plosives, a lateral approximant, and a glide. Adjacent uvulars cause extensive variation in these phonemes. For a table of possible phones in Kalaallisut, see Appendix A. \par
+
+	\citet{quan} defines the most important allophonic variations as aperture, length, and voice. For the first, they note that all vowels are lowered and retracted before uvulars, and /a/ is raised before other consonants in the same syllable. Length of a single consonant is either short or long, and within consonant clusters, in the cluster /ts/ the first consonant is long, and in any other cluster the second consonant is long. Voice is determined by manner of articulation and length. Stops and sibilants are unvoiced and nasals are voiced. Other manners of articulation are voiced when they are short and voiceless when they are lengthened. \par
+
+	\subsection{Phonotactics}
+
+	Kalaallisut has a (C)V(V)(C) syllable structure. In his discussion of phonotactics, \citet{grammar} says that word finally, only singleton plosives and vowels are allowed, and word initially, plosives, /s/, /h/, /m/, and /n/ and vowels are allowed. Loanwords also allow /f/, /v/, /j/, /l/, and /r/ word initially, in addition to permitting consonant clusters such as /kr/, as in \textit{kristumiu} `Christian.'' Word medially, some clusters occur in loanwords, as seen in the previous example with /st/. \par
+
+	While in general, \citet{grammar} has the correct analysis, \citet{rischel} makes note of a kind of word-final reduction which increases the set of syllables which can be found word finally, which he describes as a ``clipping'' of the coda of the final syllable. For example, \textit{qujanaq} `thank you' is shortened to \textit{qujan} with a word final /n/, usually not permissible. \citet{rischel} says that his consultants did not consider it a separate wordform, a statement backed up by the fact that the prosodic contour for the word is that of the original word with the last prosodic segment also clipped, rather than the a contour consistent with the general rule of counting backwards from the final syllable to apply tone. \par 
+
+	\subsection{Unique Phonological Problems}
+
+	Phonologically, Kalaallisut is both generally well-behaved, at least for the purpose of creating a speech synthesis system, and well-studied. One major feature that must be contended with is the sequence /VrC/, such as in the word \textit{erinarsuut} `song.'' The uvular /r/ affects both the preceding vowel, which becomes a uvular vowel, and the following consonants, which lengthens. However, as \citet{quan} describes, there is still discussion over how much the following consonant lengthens, and whether or not the uvular is at all retained. They come to the conclusion that the uvular is partially assimilated to the following consonant, but is retained enough to cause the preceding vowel to uvularize. Duration measurements taken by this study showed that the non-uvular segment is equal in length to a simple geminate consonant. \par
+
+\section{Creating the voice}
+
+To create the voice, the possible diphones must be first determined. Then, rules for converting the orthographic representation into a phonetic representation are created. Non-standard words have to be expanded and converted, and loanwords which do not conform to Kalaallisut phonotactics must also be converted, though not through the same set of rules. Input, in the form of words in the standard orthography, are both converted into strings of phones, and broken up into syllables, in order to prepare for the step of marking prosody. The prosody-marked phonetic string is then fed to the actual synthesizer. \par
+
+The segments to be synthesized are prepared by making a list containing all required diphones embedded in words. Either real words or nonsense words may be used. Nonsense words have the advantage of carrying less emphasis during recording, and if for each type of diphone, each diphone is embedded in the same nonsense word, as in \citet{mongolian}, the speaker will use a steadier rhythm. For purposes of this paper I am choosing real words rather than nonsense words, as I am not a speaker of the language. \citet{quan} made the same decision, as they say due to the analyzable nature of the language, readers are likely to attempt to reinterpret a word into something familiar. However, unless a particular diphone is revealed to only occur with Kleinschmidt's ``tone,'' (as discussed above in \S 5.4) I will choose words in which the diphone occurs in a non-accented location.\par
+
+The words are then recorded by either one speaker, or one male and one female speaker if we wish to provide a choice of gender in the voice to the user, and then the diphones are extracted from the words, labeled, and stored in a database. When the system receives the phonetic-prosodic string, it pulls and modifies the diphones as necessary. Length as marked in the string causes a manipulation of diphone duration, and prosodic features are achieved through changing the value of F0.\par
+
+	\subsection{Determining diphones}
+
+	The list of diphones was created by making a list of all allophones influenced by a larger environment than just their immediate neighbor and adding that to a list of general pairs of phonemes. More specificity is not needed because some variation is captured by the environment in the diphone itself. The diphones /kr/ and /st/, consonant clusters not normally allowed in Kalaallisut, were added to the list for their common usage in Christianity-related contexts.\par
+	An exception to a strictly diphone model was made for the pre-uvularized geminate consonants, which are orthographically represented $<$VrC$>$ and phonetically consist of a uvularized vowel followed by some remnant of the uvular, followed by the consonant, which is lengthened to nearly the length of a standard geminate in the language. For example, the word \textit{ersiut} `vowel,'' the initial vowel /i/ has a uvular or pharyngeal quality, and the initial consonant /s/ is lengthened. However, there is dispute over how much of the uvular remains, and how much is absorbed onto either side, as recorded by \citet{rischel}. Therefore, for these cases I will include triphones of this form in with the diphones. \par
+	When choosing the recording environments for the diphones, I used the method of determining syllable weight described in \S 5.4 to give preference to environments that place the diphone in a minimally weighted syllable. I also chose instances of singleton vowels and consonants, except in cases in which some phoneme such as /f/ only occurs in a geminate position, to try and keep consistent choices among all pairs, despite my method of hand-selection. \par
+	See Appendix B for the list of diphones and triphones with a corresponding natural environment for each. \par
+
+	\subsection{Rules for Conversion of Orthography into Phones}
+
+	The orthography of Kalaallisut was standardized in 1972 and 1973, and is the end of a chain of linguist-created orthographies, according to \citet{rischel}. As such, the phonetic value of a grapheme can be determined from the grapheme and its immediate neighbors, with no ambiguity; the orthography is phonetic. Therefore, a list of handwritten rules for converting the orthographic representation into a phonetic representation is all that is necessary. The handwritten rules can then be turned into finite-state transducers using available software packages. For an example of a method for turning orthographic Kalaallisut into a system that can be easily read off as diphones, see Appendix C. English summaries of the rules are provided in the table below.\par
+
+	\begin{tabular}{|c|l|}
+	\hline
+	Grapheme & Rules \\
+	\hline
+	a & /a/ unless preceding $<$rC$>$, in which case uvularized\\
+	i & /i/ in all cases\\
+	e & Uvularized /i/\\
+	u & /u/ in all cases\\
+	o & Uvularized /u/\\
+	f & /f/ in all cases\\
+	g & /x/ when after $<$r$>$ or next to another $<$g$>$, /\textipa{G}/ otherwise\\
+	h & /h/ in all cases\\
+	j & /j/ in all cases\\
+	k & /k/ in all cases\\
+	l & /\textbeltl/ when after $<$r$>$ or next to another $<$l$>$, /l/ otherwise\\
+	m & /m/ in all cases\\
+	n & /\textipa{N}/ if followed by $<$g$>$ or $<$ng$>$, /\textscn/ before $<$r$>$, /n/ otherwise\\
+	p & /p/ in all cases\\
+	q & /q/ in all cases\\
+	r & /\textinvscr/ unless preceding a consonant, in which case uvularizes preceding vowel\\
+	s & Part of the affricate /ts/ if preceded by $<$t$>$, /s/ otherwise\\
+	t & Part of the affricate /ts/ if followed by $<$s$>$, /t/ otherwise\\
+	v & /v/ in all cases\\
+	\hline
+	\end{tabular}
+
+	\subsection{Non-standard Words and Loanwords}
+
+	Non-standard words include various types of numbers, and abbreviations and acronyms. For example, in English, a text-to-speech system should be able to take in the sentence ``The due date is Jan 12'' and correctly determine to read ``Jan'' as ``January'' and ``12'' as ``twelfth,'' rather than thinking ``Jan'' is the personal name and ``12'' is ``twelve'' or ``one two.'' I do not know enough about how Greenlanders write and pronounce numbers, abbreviations, and acronyms, to say anything about how these will be resolved. One method for resolving this lack of knowledge would be to ask native speakers to write short paragraphs in both informal and formal settings, and then read their work out loud. Recordings of their pronunciation of each non-standard word can be compared with what they wrote. They can also be asked to read aloud pre-existing texts or phrases commonly needed by text-to-speech systems.If a great enough number of speakers participates, I believe a large range of non-standard words can be captured. \par
+
+	At the beginning of this century Kalaallisut was still a co-official language of Greenland with Danish, and at the time of writing Greenland is still legally part of Denmark, which means that many residents of Greenland will speak both languages. Several thousand speakers of Kalaallisut live in Denmark, as well. Often, therefore, names of people and places are Danish in origin, or words in Danish, English, or some other language will be mixed in. These must be able to be accounted for, especially the Danish names and words. The phonotactic restraints of Kalaallisut prohibit any consonant clusters except for /ts/ and /rC/, whereas Danish and English contain many more clusters. \par
+
+	Kalaallisut provides for vowel harmony in the case of epenthesis to break up loanword consonant clusters, or to correct for vowels not present in the inventory. For example, the Danish name S\o ren is assimilated into the phonemic structure of Kalaallisut as Suulut, in which the second vowel, neutral in Danish, takes on the qualities of the first. An example of epenthesis is found in Knud becoming Kunuut. \par
+
+	\subsection{Prosody}
+
+	According to \cite{grammar}, stress does not play a contrastive role in Kalaallisut. \cite{rischel} notes that the study of stress in Kalaallisut is not particularly advanced, as listeners perceive much influence from the tonal contour, making their judgments about where stress falls uncertain. \cite{kleinschmidt}, cited by \cite{rischel}, created a set of syllable weight rules, in which each syllable is given a value from one to five. Each short vowel in a syllable has a worth of two, and a syllable-final consonant has a worth of one. In this analysis, long vowels are considered to be two short vowels, and are thus worth four. \par
+
+	\cite{kleinletter} cites a letter from Kleinschmidt to Bourquin which gives the following examples of words (transcribed by \cite{rischel} into modern orthography) with their syllable weights marked:
+
+	\begin{exe}
+	\item
+	\begin{tabular}{ccccccccccc}
+	na & nu & & i & lu & mut & & qi & lam & miit & tuq \\
+	2 & 2 & & 2 & 2 & 3 & & 2 & 3 & 5 & 3 \\
+	\end{tabular}
+	\end{exe}
+
+	\cite{kleinschmidt} then marks ``tones'' on words, but the analysis of \cite{rischel} on his comparison of ``tone'' in Kalaallisut words with that of German words reveals these tones to be different from the modern analysis of tone contour in the language. He identifies a main ``tone'' or accent, with longer words also having subsidiary accents. The main accent falls on the heaviest out of the last three syllables. If these are of equal weight, it falls on the first of these. The subsidiary accents occur in a pattern of alternating accented and unaccented syllables. See Appendix C for an automated method of marking Kleinschmidt's ``tones.'' \par
+
+\section{Conclusion}
+
+In order for a speech synthesis system designed for Kalaallisut to become a reality, high quality recordings of the listed words must first be made by a native speaker, and then the information gathered in this paper must be used alongside those recordings and software for assembling the voice. \par
+
+Previous work on text to speech systems has been done primarily by engineers and computer scientists, although the webpages of both Festival and Festvox state that they hope clear and plentiful documentation will encourage those without a technical background to pursue creating artificial voices. I hope that this work will encourage more people with the linguistic know-how to isolate and analyze relevant language-specific data to prepare guides for a wide variety of languages. I think especial benefit could come from teams of linguists, engineers, and community members working together to develop language technologies for under-resourced language communities. While most work today focuses on either practical applications for widely-spoken languages or academic research into the challenges associated with less-spoken languages, I am hopeful that a collaborative, open, and people-driven effort could rapidly expand the reach and variety of language technology, providing another set of tools with which communities can fight a decline in language use. \par
+
+\newpage
+
+\appendix
+\section{Phones}
+
+		The information in these charts is taken from \cite{eskimo_language}, \cite{west_dict}, and \cite{grammar} to illustrate the wide range in phonetic realization of phonemes. \par 
+		\noindent \textbf{Consonants:} \par
+		\begin{table*}[h]
+		\begin{threeparttable}
+		\begin{tabular}{|l|cc|cc|cc|cc|cc|cc|cc|cc|}
+		\hline
+		& \multicolumn{2}{c|}{Bilabial} & \multicolumn{2}{c|}{\makecell[c]{Labio-\\dental}} & \multicolumn{2}{c|}{Alveolar} & \multicolumn{2}{c|}{Palatal} & \multicolumn{2}{c|}{\makecell[c]{Post-\\Palatal}} & \multicolumn{2}{c|}{Velar} & \multicolumn{2}{c|}{Uvular} & \multicolumn{2}{c|}{Glottal}\\
+		\hline
+		Plosive & p & & & & t & & & & \textadvancing{k} & & k & & q & & \textipa{P} & \\
+		\hline
+		\makecell[l]{Palatalized \\ Plosive} & & & & & t$^j$ & & & & & & & & & & & \\
+		\hline
+		Nasal & m & & & & n & & & & & & & \textipa{N} & & \textscn & & \\ %m \tnote{1} n \tnote{1} $^{,}$ \tnote{10} \textipa{N} \tnote{1} \textscn \tnote{1}
+		\hline
+		Fricative & & \textbeta & f & v & s & & & & \textctj & & x & \textipa{G} & & \textinvscr & h & \\ %fricative \tnote{7} \textbeta \tnote{8} f \tnote{9} s \tnote{6} $^{,}$ \tnote{10} \textctj \tnote{2} \textchi \tnote{5} \textinvscr \tnote{5} h \tnote{9}
+		\hline
+		\makecell[l]{Lateral \\ Approximate} & & & & & & l & & & & & & & & & & \\ %l \tnote{10}
+		\hline
+		\makecell[l]{Lateral \\ Fricative} & & & & & \textbeltl & & & & & & & & & & & \\
+		\hline
+		Glides & & & & & & & & j & & & & & & & & \\
+		\hline
+		Affricate & & & & & ts & & & & & & & & & & &\\ %ts \tnote{3}
+		\hline
+		\makecell[l]{Aspirated \\ Affricate} & & & & & ts$^h$ & & & & & & & & & & & \\ %ts$^h$ \tnote{4}
+
+		\hline
+		\end{tabular}
+		% \begin{tablenotes}
+		% 	\item[1] Alternates with plosive with matching place of articulation under enclitic sandhi.
+		% 	\item[2] Alternates with [j] following /i/.
+		% 	\item[3] Allophone of [t] before /i/.
+		% 	\item[4] Alternates with [t] word-finally.
+		% 	\item[5] In variation with [q] intervocalically.
+		% 	\item[6] Slightly voiced intervocalically.
+		% 	\item[7] Geminate fricatives become voiceless.
+		% 	\item[8] Replaces [v] for some older speakers.
+		% 	\item[9] In loanwords.
+		% 	\item[10] Becomes slightly palatalized in the environment of /i/.
+		% \end{tablenotes}
+		\end{threeparttable}
+		\end{table*}
+		\noindent \textbf{Vowels:} \par
+		\begin{vowel}
+			\putcvowel[l]{i}{1}
+			\putvowel[l]{\textlowering{i}}{0.35\vowelhunit}{0.5\vowelhunit}
+			\putcvowel[l]{e}{2}
+			\putvowel[l]{\textepsilon}{1.05\vowelhunit}{1.5\vowelhunit}
+			\putvowel[l]{\"e}{1.7\vowelhunit}{1\vowelhunit}
+			\putvowel[l]{\textlowering{\textretracting{e}}}{1.7\vowelhunit}{1.5\vowelhunit}
+			\putcvowel[l]{\textraising{a}}{16}
+			\putcvowel[l]{\textscripta}{5}
+			\putcvowel[r]{o}{7}
+			\putcvowel[r]{u}{8}
+			\putcvowel[r]{\textbaru}{9}
+			\putvowel[r]{\textlowering{\textopeno}}{4\vowelhunit}{2.5\vowelhunit}
+		\end{vowel}\par
+
+\newpage
+
+\section{Diphone set and recording environments}
+
+	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while most of the phones and phonemes and written according the the IPA. A notable exception is the uvular rhotic, which I represent with $<$r$>$. The relevant part of each recording environment is bolded. The glosses are originally from \cite{west_dict}, as transcribed into an electronic format available from \cite{gov}. \par
+
+	\begin{centering}
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	/a/ & /i/ & atserp\textbf{ai} `throw sweepings out on the dunghill' \\
+	/i/ & /a/ & nul\textbf{ia}q `wife' \\
+	/a/ & /u/ & uu\textbf{au}araa `(the pot) is become too full of it' \\
+	/u/ & /a/ & ul\textbf{ua}q `cheek' \\
+	/i/ & /u/ & s\textbf{iu}t `ear' \\
+	/u/ & /i/ & \textbf{ui}nik `human flesh' \\
+	/f/ & /i/ & allaf\textbf{fi}gaa `writes to him' \\
+	/i/ & /f/ & allagars\textbf{if}figaa `gets a letter from him'\\
+	/f/ & /a/ & anguf\textbf{fa}seq `web' \\
+	/a/ & /f/ & anngall\textbf{af}figaa `nods to him in the affirmative' \\
+	/f/ & /u/ & tif\textbf{fu}ppoq `splashes; squirts'\\
+	/u/ & /f/ & ajukk\textbf{uf}figaa `considers him/himself unworthy of it'\\
+	/\textipa{G}/ & /i/ & a\textbf{gi}aq `violin'\\
+	/i/ & /\textipa{G}/ & kiperiff\textbf{ig}aa `longs for him with all his heart'\\
+	/\textipa{G}/ & /a/ & pitu\textbf{ga}q `made fast; harnessed'\\
+	/a/ & /\textipa{G}/ & pulamm\textbf{ag}iaq `inlet; mouth (of a fjord)'\\
+	/\textipa{G}/ & /u/ & pussu\textbf{gu}ssuit `vise'\\ 
+	/u/ & /\textipa{G}/ & aj\textbf{ug}aq `superior' \\
+	/j/ & /i/ & \textbf{Ji}susip `Jesus'\\
+	/i/ & /j/ & seq\textbf{ij}ak `slack; worn-out; indifferent to his appearance' \\
+	/j/ & /a/ & a\textbf{ja} `maternal aunt; aunt' \\
+	/a/ & /j/ & \textbf{aj}agaq `ring-and-pin game'\\
+	/j/ & /u/ & a\textbf{ju}ssuseq `wickedness' \\
+	/u/ & /j/ & n\textbf{uj}aq `single hair' \\
+	\hline
+	\end{tabular}
+	\end{centering}
+	\newpage
+	\begin{centering}
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	/k/ & /i/ & a\textbf{ki}mmippoq `strikes against it' \\
+	/i/ & /k/ & m\textbf{ik}iaq `fermented food' \\
+	/k/ & /a/ & na\textbf{ka}latsivoq `hangs his head in (shame or sorrow)'\\
+	/a/ & /k/ & n\textbf{ak}atarpoq `plays ninepins' \\
+	/k/ & /u/ & pu\textbf{ku}suk `back of head; nape of neck' \\
+	/u/ & /k/ & tors\textbf{uk}attak `sound (nautical term)' \\
+	/l/ & /i/ & appa\textbf{li}arsuk `little auk'\\
+	/i/ & /l/ & ajassaanng\textbf{il}aq `be immovable'\\
+	/l/ & /a/ & tapita'\textbf{la}riipput `they are used in a lump'\\
+	/a/ & /l/ & tass\textbf{al}i `without reason; without object'\\
+	/l/ & /u/ & u\textbf{lu} `Greenlandic woman's knife; harpoon head'\\
+	/u/ & /l/ & \textbf{ul}ussaq `iron for head of harpoon'\\
+	/\textbeltl/ & /i/ & ili\textbf{lli}erpaa `puts him into a shirt'\\
+	/i/ & /\textbeltl/ & ak\textbf{ill}orippoq `is quick at answering'\\
+	/\textbeltl/ & /a/ & kisissaanngi\textbf{lla}t `they are not to be counted; countless'\\
+	/a/ & /\textbeltl/ & kuj\textbf{all}eq `the southern-most'\\
+	/\textbeltl/ & /u/ & i\textbf{llu} `peat-walled hut' \\
+	/u/ & /\textbeltl/ & k\textbf{kulloq} `thumb; bind-toe (of animals or birds)'\\
+	/m/ & /i/ & ma\textbf{mi} `blubber on the fleshy side of a skin'\\
+	/i/ & /m/ & \textbf{im}aq `sea' \\
+	/m/ & /a/ & miluu\textbf{ma}soq `mammal'\\
+	/a/ & /m/ & \textbf{am}iq `skin' \\
+	/m/ & /u/ & oqqu\textbf{mu}t `has found shelter'\\
+	/u/ & /m/ & paq\textbf{um}igaa `is shy of it for religious reasons'\\
+	\hline
+	\end{tabular}
+	\end{centering}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	/n/ & /i/ & \textbf{ni}giq `southerly wind' \\
+	/i/ & /n/ & palers\textbf{in}eq `the charred part of something'\\
+	/n/ & /a/ & pa\textbf{na} `large knife; sword'\\
+	/a/ & /n/ & p\textbf{an}erfaq `concubine'\\
+	/n/ & /u/ & i\textbf{nu}it `human beings'\\
+	/u/ & /n/ & n\textbf{unaat} `cultivated soil'\\
+	/\textipa{N}/ & /i/ & saa\textbf{ngi}uppaa `keep in front of something with it'\\
+	/i/ & /\textipa{N}/ & p\textbf{ing}eq `red wood (drift wood)'\\
+	/\textipa{N}/ & /a/ & ua\textbf{nga} `I' \\
+	/a/ & /\textipa{N}/ & s\textbf{ang}oorpoq `wriggles; winds (like a road)'\\
+	/\textipa{N}/ & /u/ & ti\textbf{ngu}k `liver'\\
+	/u/ & /\textipa{N}/ & toq\textbf{ungavoq} `the dead'\\
+	/p/ & /i/ & tussa\textbf{pi}ppoq `walks in darkness or on a bad road'\\
+	/i/ & /p/ & \textbf{ip}uppaa `rows it (the boat)'\\
+	/p/ & /a/ & \textbf{pa}lak `excellent; splendid'\\
+	/a/ & /p/ & aj\textbf{ap}erpoq `supports the hand against something'\\
+	/p/ & /u/ & \textbf{pu}juq `smoke' \\
+	/u/ & /p/ & al\textbf{up}aarpoq `has his wife with him on the sledge'\\
+	/q/ & /i/ & \textbf{qi}lak `sky' \\
+	/i/ & /q/ & al\textbf{iq} `harpoon line' \\
+	/q/ & /a/ & a\textbf{qa}jak `belly; stomach; abdomen'\\
+	/a/ & /q/ & inu\textbf{aq} `finger' \\
+	/q/ & /u/ & a\textbf{qu} `stern'\\
+	/u/ & /q/ & \textbf{uq}aq `tongue' \\
+	\hline
+	\end{tabular}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	/r/ & /i/ & ullu\textbf{ri}aq `star' \\
+	/i/ & /r/ & millil\textbf{er}ut `that by which something is reduced; reef'\\
+	/r/ & /a/ & aappassianngua\textbf{a} `my little sweetheart'\\
+	/a/ & /r/ & is\textbf{ar}oq `wing'\\
+	/r/ & /u/ & assalikaa\textbf{rut} `rolling pin'\\
+	/u/ & /r/ & marl\textbf{or}iarpoq `does something twice'\\
+	/s/ & /i/ & ila\textbf{si}voq `gets a companion'\\
+	/i/ & /s/ & p\textbf{is}ooq `rich'\\
+	/s/ & /a/ & i\textbf{sareq} `bird which has moulted'\\
+	/a/ & /s/ & uumm\textbf{as}ivaa `it came to life again in his hands'\\
+	/s/ & /u/ & uniu\textbf{su}ngarpaa `is on the point of hitting it'\\
+	/u/ & /s/ & tulor\textbf{us}eq `Frenchman'\\
+	/t/ & /i/ & \textbf{ti}mi `body' \\
+	/i/ & /t/ & saanngut\textbf{it} `that with which something is strewn'\\
+	/t/ & /a/ & kutsisi\textbf{ta}q `a neglected child'\\
+	/a/ & /t/ & \textbf{at}ik `name' \\
+	/t/ & /u/ & \textbf{tu}nersuk `breast bone'\\
+	/u/ & /t/ & majuffapp\textbf{ut} `they all go up'\\
+	/ts/ & /i/ & mali\textbf{tsi} `follower'\\
+	/i/ & /ts/ & s\textbf{its}iuppaa `oozes through it'\\
+	/ts/ & /a/ & igu\textbf{tsa}k `bumblebee'\\
+	/a/ & /ts/ & mas\textbf{ats}erpaa `moistens; waters it'\\
+	/ts/ & /u/ & puku\textbf{tsu}joorpoq `runs stumblingly'\\
+	/u/ & /ts/ & ak\textbf{uts}unippoq `a northern bank has formed'\\
+	\hline
+	\end{tabular}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	/v/ & /i/ & aana\textbf{vi}k `great-grandmother'\\
+	/i/ & /v/ & anersaam\textbf{iv}oq `heaves a sigh; sighs'\\
+	/v/ & /a/ & qaa\textbf{va} `his forehead'\\
+	/a/ & /v/ & \textbf{av}annaq `northerly wind' \\
+	/v/ & /u/ & saa\textbf{vo}q `is strewn'\\
+	/u/ & /v/ & qas\textbf{uv}oq `is exhausted; is tired (of waiting)'\\
+	/x/ & /i/ & i\textbf{ggi}ppa `chews the fat off of it (because it tastes good)'\\
+	/i/ & /x/ & k\textbf{ggi}uppaa `takes it with him when sinking'\\
+	/x/ & /a/ & ki\textbf{ggap} `mountain pass'\\
+	/a/ & /x/ & \textbf{aggaatsoq} `one who sleeps in his clothes; a stockfish'\\
+	/x/ & /u/ & i\textbf{ggut} `biscuit'\\
+	/u/ & /x/ & t\textbf{ugg}arpaa `cuts or hacks in it'\\
+	/\textipa{X}/ & /i/ & aa\textbf{gi}aq `antler'\\
+	/i/ & /\textipa{X}/ & it\textbf{ig}arpaa `does not hit it properly; makes no impression on him'\\
+	/\textipa{X}/ & /a/ & issali\textbf{ga}mi `some time ago'\\
+	/a/ & /\textipa{X}/ & qalip\textbf{ag}aa `oil painting'\\
+	/\textipa{X}/ & /u/ & qaqu\textbf{gu} `when; some time (in the future)'\\
+	/u/ & /\textipa{X}/ & qal\textbf{ug}iaq `whale lance'\\
+	/h/ & /i/ & (no example of this sequence found) \\ %not existent ADD FOOTNOTE
+	/h/ & /a/ & \textbf{haa} `look!' \\
+	/h/ & /u/ & \textbf{hu}j `an exclamation when feeling cold' \\
+	/k/ & /r/ & \textbf{kr}istumiu `Christian'\\
+	/s/ & /t/ & kri\textbf{st}umiu `Christian'\\
+	\hline
+	\end{tabular}
+	\newpage
+	The triphones are in the table below. All instances of /Vr/ are those found in the structure /VrC/.
+
+	\begin{tabular}{|c|c|l|}
+	\hline
+	\makecell[l]{1$^{st}$ \& 2$^{nd}$ \\ Phones} & 3$^{rd}$ Phone & Recording Environment \\
+	\hline
+	/ir/ & /f/ & qasu\textbf{erf}issarsivoq `has round rest'\\
+	/f/ & /ir/ & naaf\textbf{fer}arpaa `gradually fills or ends it'\\
+	/ar/ & /f/ & oq\textbf{arf}igaa `says something to him'\\
+	/f/ & /ar/ & sar\textbf{far}ippoq `there is a strong current; it is leap tide'\\
+	/ur/ & /f/ & tallimars\textbf{orf}igaa `bungles with it'\\
+	/f/ & /ur/ & sif\textbf{for}paa `wrings the water out of it'\\
+	% /ir/ & /x/ & \\
+	/x/ & /ir/ & pag\textbf{ger}poq `is sooty (a chimney or gun barrel)'\\
+	% /ar/ & /x/ & \\
+	/x/ & /ar/ & nutag\textbf{gar}ippoq `is quite new'\\
+	% /ur/ & /x/ & \\
+	/x/ & /ur/ & sig\textbf{gor}titerpai `wrings it (the washing)\\
+	% /ir/ & /k/ & \\
+	/k/ & /ir/ & i\textbf{ker}sissimavoq `is ajar'\\
+	% /ar/ & /k/ & \\
+	/k/ & /ar/ & ilik\textbf{kar}seriippoq `is slow at learning'\\
+	% /ur/ & /k/ & \\
+	/k/ & /ur/ & i\textbf{kor}faq `underlayer'\\
+	/ir/ & /\textbeltl/ & qit\textbf{erl}ermipput `they pull at hooks'\\
+	/\textbeltl/ & /ir/ & akul\textbf{ler}saat `the midmost of them'\\
+	/ar/ & /\textbeltl/ & \textbf{arl}allit `some' \\
+	/\textbeltl/ & /ar/ & qil\textbf{lar}lissarippoq `is easily tarnished' \\
+	/ur/ & /\textbeltl/ & s\textbf{orl}ak `root' \\
+	/\textbeltl/ & /ur/ & nil\textbf{lor}serpaa `let it (food or drink) stand and get cooled' \\
+	\hline
+	\end{tabular}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	\makecell[l]{1$^{st}$ \& 2$^{nd}$ \\ Phones} & 3$^{rd}$ Phone & Recording Environment \\
+	\hline
+	/ir/ & /m/ & tann\textbf{erm}oorpoq `draws lots'\\
+	/m/ & /ir/ & ti\textbf{mer}pasippoq `lies towards the interior'\\
+	/ar/ & /m/ & saner\textbf{arm}ippaa `strikes, touches him or it with the side'\\
+	/m/ & /ar/ & i\textbf{mar}nersaq `a hole in the ice'\\
+	/ur/ & /m/ & man\textbf{orm}ippaa `carries it under the chin'\\
+	/m/ & /ur/ & kingu\textbf{mor}sorpoq `walks backwards'\\
+	/ir/ & /n/ & up\textbf{ern}aaq `spring' \\
+	/n/ & /ir/ & ajoqersor\textbf{ner}luppaa `teaches him badly; teaches him evil'\\
+	/ar/ & /n/ & inuullu\textbf{arn}erluppoq `leads a bad, luxurious life'\\
+	/n/ & /ar/ & kapi\textbf{nar}tulik `thistle; thorn shrub'\\
+	/ur/ & /n/ & kill\textbf{orn}uvoq `does not do as he is wont to do'\\
+	/n/ & /ur/ & na\textbf{nor}luarpoq `holds onto something; sits quite still'\\
+	/ir/ & /\textipa{N}/ & \textbf{erng}useq `ladle; drinking cup; bottle'\\
+	/\textipa{N}/ & /ir/ & ilu\textbf{nger}sorpoq `is serious, earnest; takes pains'\\
+	/ar/ & /\textipa{N}/ & \textbf{arng}ilippoq `gasps for a breath (after a fall)'\\
+	/\textipa{N}/ & /ar/ & qa\textbf{ngar}suaq `long ago, far back in the past'\\
+	/ur/ & /\textipa{N}/ & tart\textbf{orng}i `his small waist'\\
+	/\textipa{N}/ & /ur/ & un\textbf{ngor}taarpoq `has got a wort (or worts)'\\
+	\hline
+	\end{tabular}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	\makecell[l]{1$^{st}$ \& 2$^{nd}$ \\ Phones} & 3$^{rd}$ Phone & Recording Environment \\
+	\hline
+	/ir/ & /p/ & mallus\textbf{erp}aa `follows after him'\\
+	/p/ & /ir/ & si\textbf{per}neq `buckle'\\
+	/ar/ & /p/ & siveq\textbf{arp}oq `lasts'\\
+	/p/ & /ar/ & ta\textbf{par}poq `dances'\\
+	/ur/ & /p/ & tarners\textbf{orp}oq `walks after death'\\
+	/p/ & /ur/ & a\textbf{por}poq `strikes; runs against'\\
+	/q/ & /ir/ & sioq\textbf{qe}rivoq `digs in sand; plays with sand'\\
+	/q/ & /ar/ & sinne\textbf{qar}tippaa `has some of it left; has not used it all'\\
+	/q/ & /ur/ & \textbf{qor}suk `green; yellowish green' \\
+	/ir/ & /s/ & sinn\textbf{ers}eraapput `they take turns'\\
+	/s/ & /ir/ & ta\textbf{ser}aq `pool; pond'\\
+	/ar/ & /s/ & uummammiuss\textbf{ars}ivoq `takes something into his heart'\\
+	/s/ & /ar/ & anersaami\textbf{sar}neri `his sighs'\\
+	/ur/ & /s/ & in\textbf{ors}arpoq `cannot keep pace; must be left behind'\\
+	/s/ & /ur/ & qu\textbf{sor}aq `elegant; foppish'\\
+	% /ir/ & /ts/ & \\
+	/ts/ & /ir/ & ina\textbf{tser}iippoq `is disobliging; is slow to obey'\\
+	% /ar/ & /ts/ & \\
+	/ts/ & /ar/ & inuu\textbf{tsar}luppoq `is faint; famishing'\\
+	% /ur/ & /ts/ & \\
+	/ts/ & /ur/ & erni\textbf{tsor}luppoq `has difficulty in being delivered'\\
+	\hline
+	\end{tabular}
+
+\newpage
+
+\section{G2P Rules and Syllable Weight}
+
+\begin{lstlisting}[language=Python]
+consonants = ('f','g','h','j','k','l','m','n','p',
+	'q','r','s','t','v','w')
+d_consonants = ('ff','gg','kk','ll','mm','nn',
+	'nng','pp','qq','rr','ss','tt','LL','xx','XX')
+s_consonants = ('f','g','h','j','k','l','m','n',
+	'ng','p','q','r','s','t','v','w','L','x','X')
+consonants = s_consonants + d_consonants
+vowels = ('a','e','i','o','u','aa','ii','uu','ai')
+o_consonants = ('l','v','g')
+
+def devoice(cons):
+    """
+    Takes a consonant and returns the voiceless version.
+    """
+    if cons == 'l':
+        return 'L'
+    elif cons == 'v':
+        return 'f'
+    elif cons == 'g':
+    	return 'x'
+    elif cons == 'r':
+    	return 'X'
+    else:
+        print("error")
+
+def syllables(word):
+    """
+    Takes a Kalallisut word and returns a list
+    of its syllables.
+    """
+    word = g2p(word)
+    cur_syl = ''
+    has_vowel = False
+    sylls = []
+    for n in range(1,len(word)-1):
+        if n == 1:
+            cur_syl+=word[n]
+        elif word[n] in vowels:
+            if has_vowel:
+                sylls.append(cur_syl)
+                cur_syl = word[n]
+                has_vowel = False
+            else:
+                cur_syl+=word[n]
+                has_vowel = True
+        else:
+            if word[n] in d_consonants:
+                cur_syl+=word[n][0]
+                sylls.append(cur_syl)
+                has_vowel = False
+                cur_syl = word[n][1]
+            elif word[n+1] in vowels:
+                sylls.append(cur_syl)
+                cur_syl = word[n]
+                has_vowel = False
+            else:
+                cur_syl+=word[n]
+        if word[n+1] == '#':
+            sylls.append(cur_syl)
+            cur_syl = word[n]
+            has_vowel = False
+    return syllsr_syl = word[n]
+            has_vowel = False
+    return sylls
+
+def g2p(word):
+    """
+    Takes in a orthographic representation of a word
+    and converts it to a phonemic representation.
+    """
+    word = word + "#"
+    sound_list = ['#',]
+    n=1
+    while n in range(1,len(word)):
+        if word[n-1] in consonants:
+            if word[n-1] == 'r' and word[n] in consonants:
+                if word[n] in o_consonants:
+                    vc = devoice(word[n])
+                    sound_list.append(word[n-1]+vc)
+                    sound_list.append(vc)
+                else:
+                    sound_list.append(word[n-1]+word[n])
+                    sound_list.append(word[n])
+                n=n+1
+            elif word[n-1] == 't' and word[n] == 's':
+                sound_list.append(word[n-1]+word[n])
+                n=n+1
+            elif word[n-1] == 'n' and word[n] == 'g':
+                sound_list.append(word[n-1]+word[n])
+                n=n+1
+            elif word[n-1] == 'n'
+               and word[n] == 'n' and word[n+1] =='g':
+                sound_list.append('ng')
+                sound_list.append('ng')
+                n=n+2
+            elif word[n] in vowels or word[n] == '#':
+                sound_list.append(word[n-1])
+            elif word[n] in consonants and word[n-1] == word[n]:
+                vc = devoice(word[n])
+                sound_list.append(vc+vc)
+                n=n+1
+            else:
+                sound_list.append(word[n-1])
+        else:
+            if word[n-1] in vowels:
+                if word[n-1] == word[n] or
+                   (word[n-1]== 'a' and word[n] == 'i'):
+                    sound_list.append(word[n-1]+word[n])
+                    n=n+1
+                else:
+                    sound_list.append(word[n-1])
+        n=n+1
+    sound_list.append('#')
+    return sound_list  
+
+def print_syl(word):
+    """
+    Takes a word in the form of a list of syllables,
+    and returns it as a string
+    with syllabels separated by a period character.
+    """
+    sylls = syllables(word)
+    retval = sylls[0]
+    for n in range(1,len(sylls)):
+        retval+='.'
+        retval+=sylls[n]
+    return retval
+
+def weight(syl):
+    """
+    Takes a syllable and returns its
+    weight according to Kleinschmidt and Rischel.
+    """
+    weight = 0
+    for s in syl:
+        if s in vowels:
+            weight+=2
+    if syl[-1] in consonants:
+        weight+=1
+    return weight
+
+def weigh_syl(word):
+    """
+    Takes a word and returns a list
+    containing syllables and their corresponding weights.
+    """
+    ws = []
+    syls = syllables(word)
+    for s in syls:
+        ws.append((s,weight(s)))
+    return ws
+\end{lstlisting}
+\newpage
+
+\printbibliography
+
+\end{document}
