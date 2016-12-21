@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage[backend=biber,style=authortitle,citestyle=authoryear,natbib]{biblatex}
+\usepackage[backend=biber,style=authortitle,citestyle=authoryear,natbib,maxcitenames=2]{biblatex}
 \usepackage{listings}
 \usepackage{tipa}
 \usepackage{threeparttable}
@@ -91,7 +91,7 @@ Speech synthesis has many commercial applications. GPS voices, personal assistan
 
 	\citet{slp} point out two main areas where diphone synthesis suffers relative to unit-selection synthesis. Firstly, these systems have a limited grasp on coarticulation because of the fact that by definition a true diphone system will only capture effects on immediately neighboring phonemes. This means that any effects of coarticulation that are more distant than one phone will be lost. Secondly, the segments are distorted by the necessity of modifying them for length and pitch. Therefore, compared to a unit-selection system, a diphone system will sound to the listener less natural and more recognizable as an artificial voice. Such a lack of naturalness is not so much a problem in applications such as the use of artificial voices at crosswalks or on automated call lines, for which the primary aim is that the voice be intelligible. However, problems arise when the voice is being used as a voice for someone who cannot speak, or to read out personal correspondence to someone who cannot read it themselves, as the robotic nature reminds the speaker or listener that the voice is artificial. \par
 
-	Despite this issue with diphone synthesis, I believe it to be the best choice for situations such as are discussed in this thesis, in which speakers do not yet have any TTS system and the language is at risk of being overtaken by more populous languages. Unit-selection systems, in order to be able to select a segment, must by definition store multiple copies of each segment in memory. Diphone systems, therefore, are much smaller, which is necessary for using text-to-speech systems in applications on devices that both do not have much storage and do not have cheap and/or reliable signals to connect to an outside storage bank\emdash a not unlikely scenario for speakers of many of the world's languages, who may lack high-capacity devices, regular and reliable access to the Internet, or both. In addition, in order to have multiple copies, more time must be spent recording, which is difficult to achieve in isolated communities. To obtain high-quality recordings, either a portable sound booth much be transported in at great cost, or a speaker or speakers must spend long periods of time away from the community. \par
+	Despite this issue with diphone synthesis, I believe it to be the best choice for situations such as are discussed in this thesis, in which speakers do not yet have any TTS system and the language is at risk of being overtaken by more populous languages. Unit-selection systems, in order to be able to select a segment, must by definition store multiple copies of each segment in memory. Diphone systems, therefore, are much smaller, which is necessary for using text-to-speech systems in applications on devices that both do not have much storage and do not have cheap and/or reliable signals to connect to an outside storage bank\textemdash a not unlikely scenario for speakers of many of the world's languages, who may lack high-capacity devices, regular and reliable access to the Internet, or both. In addition, in order to have multiple copies, more time must be spent recording, which is difficult to achieve in isolated communities. To obtain high-quality recordings, either a portable sound booth much be transported in at great cost, or a speaker or speakers must spend long periods of time away from the community. \par
 
 	Another solution to the problem of memory could be to put more research into new methods in the hopes of developing a method more natural than diphone synthesis or formant synthesis, but less resource-intensive than unit-selection synthesis. Such a system could be valuable in the future; however, I believe there is importance to increasing the quantitative output in the present, rather than waiting for technology to progress. While Kalaallisut is not in danger of disappearing soon, many languages are critically endangered now, and working to get the resources for creating technological tools into the hands of community members is not a task that can wait on advances in technology. \par
 
@@ -125,7 +125,8 @@ Speech synthesis has many commercial applications. GPS voices, personal assistan
 		They created the system using Festival and tested it for intelligibility and naturalness on native speakers. The system performed well on measures of intelligibility in most cases, but was not considered particularly natural. Neither, however, was it particularly unnatural. \par
 
 		\subsubsection{Arabic}
-		Unlike \citet{mongolian}, \citet{Arabic-Festival} had existing synthetic voices in her language to work with. However, she had the special challenge of working with a system in which most vowels are not written. There are existing prediction tools for filling in the missing vowels, but none is accurate enough for speech synthesis. In the end, for her system, she used a romanized transcription system of her own design, and sidestepped the vowel issue by simply including vowels in her input. However, if the public is to be able to use this system, there will need to be a different solution, as there is no widely used standard romanization of Arabic. Another difficulty she encountered was with the gender of words. As some utterances in Arabic are marked for if the speaker is a man or a woman, care must be taken to make sure the text is always output in the correctly gendered voice, to prevent a jarring sensation to the listener. \par
+		Unlike \citet{mongolian}, \citet{Arabic-Festival} had existing synthetic voices in her language to work with. However, she had the special challenge of working with a system in which most vowels are not written. There are existing prediction tools for filling in the missing vowels, but none is accurate enough for speech synthesis. In the end, for her system, she used a romanized transcription system of her own design, and sidestepped the vowel issue by simply including vowels in her input. However, if the public is to be able to use this system, there will need to be a different solution. Finding a standard form for input is difficult, as writing in the Arabic alphabet almost never includes the vowels, so requiring them would be a burden on the user, and there is no widely used standard romanization of Arabic. Another difficulty she encountered was with the gender of words. Some speakers of languages such as Arabic, in which some utterances are marked for if the speaker is a man or a woman, find a mismatch between the perceived gender of the synthetic voice and the gender marked on the text to be jarring.
+		\par
 
 		She tested the voice she made on nine native speakers, and evaluated the system to be 85\% intelligible and 59\% natural. Furthermore, 78\% of listeners thought the speed was correct, but also 78\% found the voice at least a little annoying to listen to. The result about annoyingness is especially important to consider for any system meant to be used as part of a language revitalization program, as learners will be unlikely to make use of technology which they find unpleasant to listen to, or difficult to bear for extended periods of time. \par
 
@@ -214,9 +215,9 @@ The words are then recorded by either one speaker, or one male and one female sp
 
 	\subsection{Prosody}
 
-	According to \cite{grammar}, stress does not play a contrastive role in Kalaallisut. \cite{rischel} notes that the study of stress in Kalaallisut is not particularly advanced, as listeners perceive much influence from the tonal contour, making their judgments about where stress falls uncertain. \cite{kleinschmidt}, cited by \cite{rischel}, created a set of syllable weight rules, in which each syllable is given a value from one to five. Each short vowel in a syllable has a worth of two, and a syllable-final consonant has a worth of one. In this analysis, long vowels are considered to be two short vowels, and are thus worth four. \par
+	According to \citet{grammar}, stress does not play a contrastive role in Kalaallisut. \citet{rischel} notes that the study of stress in Kalaallisut is not particularly advanced, as listeners perceive much influence from the tonal contour, making their judgments about where stress falls uncertain. \citet{kleinschmidt}, cited by \citet{rischel}, created a set of syllable weight rules, in which each syllable is given a value from one to five. Each short vowel in a syllable has a worth of two, and a syllable-final consonant has a worth of one. In this analysis, long vowels are considered to be two short vowels, and are thus worth four. \par
 
-	\cite{kleinletter} cites a letter from Kleinschmidt to Bourquin which gives the following examples of words (transcribed by \cite{rischel} into modern orthography) with their syllable weights marked:
+	\citet{kleinletter} cites a letter from Kleinschmidt to Bourquin which gives the following examples of words (transcribed by \citet{rischel} into modern orthography) with their syllable weights marked:
 
 	\begin{exe}
 	\item
@@ -226,7 +227,7 @@ The words are then recorded by either one speaker, or one male and one female sp
 	\end{tabular}
 	\end{exe}
 
-	\cite{kleinschmidt} then marks ``tones'' on words, but the analysis of \cite{rischel} on his comparison of ``tone'' in Kalaallisut words with that of German words reveals these tones to be different from the modern analysis of tone contour in the language. He identifies a main ``tone'' or accent, with longer words also having subsidiary accents. The main accent falls on the heaviest out of the last three syllables. If these are of equal weight, it falls on the first of these. The subsidiary accents occur in a pattern of alternating accented and unaccented syllables. See Appendix C for an automated method of marking Kleinschmidt's ``tones.'' \par
+	\citet{kleinschmidt} then marks ``tones'' on words, but the analysis of \citet{rischel} on his comparison of ``tone'' in Kalaallisut words with that of German words reveals these tones to be different from the modern analysis of tone contour in the language. He identifies a main ``tone'' or accent, with longer words also having subsidiary accents. The main accent falls on the heaviest out of the last three syllables. If these are of equal weight, it falls on the first of these. The subsidiary accents occur in a pattern of alternating accented and unaccented syllables. See Appendix C for an automated method of marking Kleinschmidt's ``tones.'' \par
 
 \section{Conclusion}
 
@@ -239,7 +240,7 @@ Previous work on text to speech systems has been done primarily by engineers and
 \appendix
 \section{Phones}
 
-		The information in these charts is taken from \cite{eskimo_language}, \cite{west_dict}, and \cite{grammar} to illustrate the wide range in phonetic realization of phonemes. \par 
+		The information in these charts is compiled from \citet{eskimo_language}, \citet{west_dict}, and \citet{grammar} to illustrate the wide range in phonetic realization of phonemes. \par 
 		\noindent \textbf{Consonants:} \par
 		\begin{table*}[h]
 		\begin{threeparttable}
@@ -301,7 +302,7 @@ Previous work on text to speech systems has been done primarily by engineers and
 
 \section{Diphone set and recording environments}
 
-	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while most of the phones and phonemes and written according to the IPA. A notable exception is the uvular rhotic, which I represent with $<$r$>$. The relevant part of each recording environment is bolded. The glosses are originally from \cite{west_dict}, as transcribed into an electronic format available from \cite{gov}. \par
+	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while most of the phones and phonemes and written according to the IPA. A notable exception is the uvular rhotic, which I represent with $<$r$>$. The relevant part of each recording environment is bolded. The glosses are originally from \citet{west_dict}, as transcribed into an electronic format available from \citet{gov}. \par
 
 	\begin{centering}
 	\begin{tabular}{|c|c|l|}
