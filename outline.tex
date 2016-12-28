@@ -15,6 +15,7 @@
 \usepackage{covington}
 \usepackage{gb4e}
 \usepackage{mathptmx}
+\usepackage{amssymb}
 \noautomath
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{2}
@@ -309,31 +310,46 @@ Previous work on text to speech systems has been done primarily by engineers and
 
 \section{Diphone set and recording environments}
 
-	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while the phonemes are written according to the IPA. The relevant part of each recording environment is bolded. The glosses are originally from \citet{west_dict}, transcribed into the modern orthography and digitized by \citet{gov}. \par
+	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while the phonemes are written according to the IPA. The symbol $\varnothing$ indicates a boundary. The relevant part of each recording environment is bolded. The glosses are originally from \citet{west_dict}, transcribed into the modern orthography and digitized by \citet{gov}. \par
 
 	\begin{centering}
 	\begin{tabular}{|c|c|l|}
 	\hline
 	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
 	\hline
+	$\varnothing$ & /a/ & \textbf{a}llatut `different; in a different manner'\\
+	/a/ & $\varnothing$ & eqi\textbf{a} `corner of his mouth'\\
+	$\varnothing$ & /i/ & \textbf{i}lluku `ruin of house'\\
+	/i/ & $\varnothing$ & ikan\textbf{i} `over there'\\
+	$\varnothing$ & /u/ & \textbf{u}niaaq `that which is being trailed, dragged'\\
+	/u/ & $\varnothing$ & pattak\textbf{u} `piece of bone from which the marrow has been extracted'\\
 	/a/ & /i/ & atserp\textbf{ai} `throw sweepings out on the dunghill' \\
 	/i/ & /a/ & nul\textbf{ia}q `wife' \\
 	/a/ & /u/ & uu\textbf{au}araa `(the pot) is become too full of it' \\
 	/u/ & /a/ & ul\textbf{ua}q `cheek' \\
 	/i/ & /u/ & s\textbf{iu}t `ear' \\
 	/u/ & /i/ & \textbf{ui}nik `human flesh' \\
+	\hline
+	\end{tabular}
+	\end{centering}
+	\newpage
+	\begin{centering}
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
 	/f/ & /i/ & allaf\textbf{fi}gaa `writes to him' \\
 	/i/ & /f/ & allagars\textbf{if}figaa `gets a letter from him'\\
 	/f/ & /a/ & anguf\textbf{fa}seq `web' \\
 	/a/ & /f/ & anngall\textbf{af}figaa `nods to him in the affirmative' \\
 	/f/ & /u/ & tif\textbf{fu}ppoq `splashes; squirts'\\
 	/u/ & /f/ & ajukk\textbf{uf}figaa `considers him/himself unworthy of it'\\
+	/u/ & /\textipa{G}/ & aj\textbf{ug}aq `superior' \\
 	/\textipa{G}/ & /i/ & a\textbf{gi}aq `violin'\\
 	/i/ & /\textipa{G}/ & kiperiff\textbf{ig}aa `longs for him with all his heart'\\
 	/\textipa{G}/ & /a/ & pitu\textbf{ga}q `made fast; harnessed'\\
 	/a/ & /\textipa{G}/ & pulamm\textbf{ag}iaq `inlet; mouth (of a fjord)'\\
-	/\textipa{G}/ & /u/ & pussu\textbf{gu}ssuit `vise'\\ 
-	/u/ & /\textipa{G}/ & aj\textbf{ug}aq `superior' \\
+	/\textipa{G}/ & /u/ & pussu\textbf{gu}ssuit `vise'\\
 	/j/ & /i/ & \textbf{Ji}susip `Jesus'\\
 	/i/ & /j/ & seq\textbf{ij}ak `slack; worn-out; indifferent to his appearance' \\
 	/j/ & /a/ & a\textbf{ja} `maternal aunt; aunt' \\
@@ -344,11 +360,12 @@ Previous work on text to speech systems has been done primarily by engineers and
 	\end{tabular}
 	\end{centering}
 	\newpage
-	\begin{centering}
 	\begin{tabular}{|c|c|l|}
 	\hline
 	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
 	\hline
+	$\varnothing$ & /k/ & \textbf{k}akammik `surprising, too bad'\\
+	/k/ & $\varnothing$ & kakki\textbf{k} `snot'\\
 	/k/ & /i/ & a\textbf{ki}mmippoq `strikes against it' \\
 	/i/ & /k/ & m\textbf{ik}iaq `fermented food' \\
 	/k/ & /a/ & na\textbf{ka}latsivoq `hangs his head in (shame or sorrow)'\\
@@ -366,21 +383,22 @@ Previous work on text to speech systems has been done primarily by engineers and
 	/\textbeltl/ & /a/ & kisissaanngi\textbf{lla}t `they are not to be counted; countless'\\
 	/a/ & /\textbeltl/ & kuj\textbf{all}eq `the southern-most'\\
 	/\textbeltl/ & /u/ & i\textbf{llu} `peat-walled hut' \\
-	/u/ & /\textbeltl/ & k\textbf{kulloq} `thumb; bind-toe (of animals or birds)'\\
+	/u/ & /\textbeltl/ & k\textbf{kulloq} `thumb; bind-toe (of animals or birds)' \\
+	\hline
+	\end{tabular}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	$\varnothing$ & /m/ & \textbf{m}alaq `throat'\\
 	/m/ & /i/ & ma\textbf{mi} `blubber on the fleshy side of a skin'\\
 	/i/ & /m/ & \textbf{im}aq `sea' \\
 	/m/ & /a/ & miluu\textbf{ma}soq `mammal'\\
 	/a/ & /m/ & \textbf{am}iq `skin' \\
 	/m/ & /u/ & oqqu\textbf{mu}t `has found shelter'\\
 	/u/ & /m/ & paq\textbf{um}igaa `is shy of it for religious reasons'\\
-	\hline
-	\end{tabular}
-	\end{centering}
-	\newpage
-	\begin{tabular}{|c|c|l|}
-	\hline
-	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
-	\hline
+	$\varnothing$ & /n/ & \textbf{n}ajak `younger sister'\\
 	/n/ & /i/ & \textbf{ni}giq `southerly wind' \\
 	/i/ & /n/ & palers\textbf{in}eq `the charred part of something'\\
 	/n/ & /a/ & pa\textbf{na} `large knife; sword'\\
@@ -393,18 +411,6 @@ Previous work on text to speech systems has been done primarily by engineers and
 	/a/ & /\textipa{N}/ & s\textbf{ang}oorpoq `wriggles; winds (like a road)'\\
 	/\textipa{N}/ & /u/ & ti\textbf{ngu}k `liver'\\
 	/u/ & /\textipa{N}/ & toq\textbf{ungavoq} `the dead'\\
-	/p/ & /i/ & tussa\textbf{pi}ppoq `walks in darkness or on a bad road'\\
-	/i/ & /p/ & \textbf{ip}uppaa `rows it (the boat)'\\
-	/p/ & /a/ & \textbf{pa}lak `excellent; splendid'\\
-	/a/ & /p/ & aj\textbf{ap}erpoq `supports the hand against something'\\
-	/p/ & /u/ & \textbf{pu}juq `smoke' \\
-	/u/ & /p/ & al\textbf{up}aarpoq `has his wife with him on the sledge'\\
-	/q/ & /i/ & \textbf{qi}lak `sky' \\
-	/i/ & /q/ & al\textbf{iq} `harpoon line' \\
-	/q/ & /a/ & a\textbf{qa}jak `belly; stomach; abdomen'\\
-	/a/ & /q/ & inu\textbf{aq} `finger' \\
-	/q/ & /u/ & a\textbf{qu} `stern'\\
-	/u/ & /q/ & \textbf{uq}aq `tongue' \\
 	\hline
 	\end{tabular}
 	\newpage
@@ -412,24 +418,50 @@ Previous work on text to speech systems has been done primarily by engineers and
 	\hline
 	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
 	\hline
+	$\varnothing$ & /p/ & \textbf{p}amioq `tail (on an animal with a round tail)'\\
+	/p/ & $\varnothing$ & inuu\textbf{p} `human being (\textsc{erg})'\\
+	/p/ & /i/ & tussa\textbf{pi}ppoq `walks in darkness or on a bad road'\\
+	/i/ & /p/ & \textbf{ip}uppaa `rows it (the boat)'\\
+	/p/ & /a/ & \textbf{pa}lak `excellent; splendid'\\
+	/a/ & /p/ & aj\textbf{ap}erpoq `supports the hand against something'\\
+	/p/ & /u/ & \textbf{pu}juq `smoke' \\
+	/u/ & /p/ & al\textbf{up}aarpoq `has his wife with him on the sledge'\\
+	$\varnothing$ & /q/ & oquppo\textbf{q} `is full of mold or maggots; is moldy'\\
+	/q/ & $\varnothing$ & \textbf{q}ilaaq `palate; ceiling'\\
+	/q/ & /i/ & \textbf{qi}lak `sky' \\
+	/i/ & /q/ & al\textbf{iq} `harpoon line' \\
+	/q/ & /a/ & a\textbf{qa}jak `belly; stomach; abdomen'\\
+	/a/ & /q/ & inu\textbf{aq} `finger' \\
+	/q/ & /u/ & a\textbf{qu} `stern'\\
+	/u/ & /q/ & \textbf{uq}aq `tongue' \\
 	/r/ & /i/ & ullu\textbf{ri}aq `star' \\
 	/i/ & /r/ & millil\textbf{er}ut `that by which something is reduced; reef'\\
 	/r/ & /a/ & aappassianngua\textbf{a} `my little sweetheart'\\
 	/a/ & /r/ & is\textbf{ar}oq `wing'\\
 	/r/ & /u/ & assalikaa\textbf{rut} `rolling pin'\\
 	/u/ & /r/ & marl\textbf{or}iarpoq `does something twice'\\
+	/u/ & /t/ & majuffapp\textbf{ut} `they all go up'\\
+	\hline
+	\end{tabular}
+	\newpage
+	\begin{tabular}{|c|c|l|}
+	\hline
+	1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	\hline
+	$\varnothing$ & /s/ & \textbf{s}ulivoq `does something; is at work'\\
 	/s/ & /i/ & ila\textbf{si}voq `gets a companion'\\
 	/i/ & /s/ & p\textbf{is}ooq `rich'\\
 	/s/ & /a/ & i\textbf{sareq} `bird which has moulted'\\
 	/a/ & /s/ & uumm\textbf{as}ivaa `it came to life again in his hands'\\
 	/s/ & /u/ & uniu\textbf{su}ngarpaa `is on the point of hitting it'\\
 	/u/ & /s/ & tulor\textbf{us}eq `Frenchman'\\
+	$\varnothing$ & /t/ & \textbf{t}iliaq `friend; comrade'\\
+	/t/ & $\varnothing$ & tigutsi\textbf{t} `prehensile organ'\\
 	/t/ & /i/ & \textbf{ti}mi `body' \\
 	/i/ & /t/ & saanngut\textbf{it} `that with which something is strewn'\\
 	/t/ & /a/ & kutsisi\textbf{ta}q `a neglected child'\\
 	/a/ & /t/ & \textbf{at}ik `name' \\
 	/t/ & /u/ & \textbf{tu}nersuk `breast bone'\\
-	/u/ & /t/ & majuffapp\textbf{ut} `they all go up'\\
 	/ts/ & /i/ & mali\textbf{tsi} `follower'\\
 	/i/ & /ts/ & s\textbf{its}iuppaa `oozes through it'\\
 	/ts/ & /a/ & igu\textbf{tsa}k `bumblebee'\\
@@ -455,13 +487,22 @@ Previous work on text to speech systems has been done primarily by engineers and
 	/a/ & /x/ & \textbf{aggaatsoq} `one who sleeps in his clothes; a stockfish'\\
 	/x/ & /u/ & i\textbf{ggut} `biscuit'\\
 	/u/ & /x/ & t\textbf{ugg}arpaa `cuts or hacks in it'\\
-	/\textipa{X}/ & /i/ & aa\textbf{gi}aq `antler'\\
-	/i/ & /\textipa{X}/ & it\textbf{ig}arpaa `does not hit it properly; makes no impression on him'\\
-	/\textipa{X}/ & /a/ & issali\textbf{ga}mi `some time ago'\\
-	/a/ & /\textipa{X}/ & qalip\textbf{ag}aa `oil painting'\\
-	/\textipa{X}/ & /u/ & qaqu\textbf{gu} `when; some time (in the future)'\\
-	/u/ & /\textipa{X}/ & qal\textbf{ug}iaq `whale lance'\\
-	/h/ & /i/ & (no example of this sequence found) \\ %not existent ADD FOOTNOTE
+	% $\varnothing$ & /\textipa{X}/ & \\
+	% /\textipa{X}/ & $\varnothing$ & \\
+	% /\textipa{X}/ & /i/ & aa\textbf{gi}aq `antler'\\
+	% /i/ & /\textipa{X}/ & it\textbf{ig}arpaa `does not hit it properly; makes no impression on him'\\
+	% /\textipa{X}/ & /a/ & issali\textbf{ga}mi `some time ago'\\
+	% /a/ & /\textipa{X}/ & qalip\textbf{ag}aa `oil painting'\\
+	% /\textipa{X}/ & /u/ & qaqu\textbf{gu} `when; some time (in the future)'\\
+	% /u/ & /\textipa{X}/ & qal\textbf{ug}iaq `whale lance'\\
+	% \hline
+	% \end{tabular}
+	% \newpage
+	% \begin{tabular}{|c|c|l|}
+	% \hline
+	% 1$^{st}$ Phone & 2$^{nd}$ Phone & Recording Environment \\
+	% \hline
+	/h/ & /i/ & (no example of this sequence found) \\
 	/h/ & /a/ & \textbf{haa} `look!' \\
 	/h/ & /u/ & \textbf{hu}j `an exclamation when feeling cold' \\
 	/k/ & /r/ & \textbf{kr}istumiu `Christian'\\
@@ -469,7 +510,7 @@ Previous work on text to speech systems has been done primarily by engineers and
 	\hline
 	\end{tabular}
 	\newpage
-	The triphones are in the table below. All instances of /Vr/ are those found in the structure /VrC/.
+	The triphones are in the table below. All instances of /Vr/ are those found in the structure /VrC/, and thus cannot form a boundary. \par
 
 	\begin{tabular}{|c|c|l|}
 	\hline
