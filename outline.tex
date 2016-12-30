@@ -110,7 +110,7 @@ Speech synthesis has many commercial applications. GPS voices, personal assistan
 		\subsubsection{ToBI}
 		The ToBI (Tone and Break Indices) model, developed by \citet{tobi} and described by \citet{slp}, represents an utterance as a sequence of intonational phrases. Each phrase ends in one of four boundary tones, and each word within a phrase has the option to be associated with one of five pitch accents.\footnote{\samepage{A `peak accent,' represented by H*, is in the middle to upper part of the speaker's pitch range. The lower part of the pitch range is covered by a `low accent,' L*. A `scooped accent,' represented by L*+H, is a low tone on the accented syllable immediately followed by a sharp rise in pitch. A high peak target on the accented syllable preceded by a sharp rise in pitch is called a `rising peak accent,' represented by L+H*. The final pitch accent is represented by H+!H and indicates a step down onto the accented syllable from a high pitch, used only when the preceding material is clearly high-pitched and unaccented.}} The intonational phrases can furthermore be broken down into intermediate phrases, which can also receive a boundary tone. The decomposition of intonational phrases into intermediate phrases is part of ToBI's system of break indices. The strongest breaks (break index 4) are found between intonational phrases, and the next level (break index 3) is that of the intermediate phrases. Phrase index 1 is used for a standard word boundary, and phrase index 2 for a break between that of an intermediate phrase and a word boundary in strength. \par
 
-		ToBI was designed for use with English utterances, but has been modified and adapted for use with other languages, such as J\_TOBI for Japanese. It is also used in its original form when no other tool is available, as seen in the example of \citet{mongolian}, discussed in \S 3.5.1.. \par
+		ToBI was designed for use with English utterances, but has been modified and adapted for use with other languages, such as J\_TOBI for Japanese and GToBI for German. It is also used in its original form when no other tool is available, as seen in the example of \citet{mongolian}, discussed in \S 3.5.1.. \par
 
 		\subsubsection{Festival and Festvox}
 		Festival is free software originally developed by \citet{festival} at the University of Edinburgh which provides a framework for building speech synthesis systems, and includes a few example systems, such as for English and Welsh. It is written in C++ and includes a Scheme-based command interpreter to give the user more control. This also allows users with varying levels of comfort in the technology to utilize the software. \par
@@ -128,7 +128,7 @@ Speech synthesis has many commercial applications. GPS voices, personal assistan
 
 		\citet{mongolian} created a diphone system for the Halh (or Khalkha) dialect of Mongolian. Halh Mongolian is the national language of Mongolia, with about three million speakers in total. Some researchers before this group had explored parts of the problem of creating a text-to-speech system for Mongolian, but none had done all the work required to actually build one, making theirs the first one. \par
 
-		Particular challenges with which they had to contend included homograph disambiguation and phone duration. The first could be partially resolved by part of speech tagging, and the second by using a machine learning algorithm on a dataset of spoken Mongolian to train a prediction tool. As Kalaallisut seems to have no homographs, the first will not be an issue for me. I also do not anticipate experiencing trouble with phone duration, as while in Mongolian phone length is extremely contextual and must be analyzed statistically, in Kalaallisut phones duration is clearly marked as long or short, save in the cases of the consonant clusters, and thus will require less analysis. Prosody in Mongolian can be predicted with good results from punctuation. They used the CART (classification and regression trees) model, a type of machine learning method developed by \citet{cart} for creating predictions from data, to predict prosodic phrase structure and mark ToBI accents and an F0 contour. However, as there is no version of ToBI specifically for Mongolian, the team used the English model, which could yield incorrect results.\par
+		Particular challenges with which they had to contend included homograph disambiguation and phone duration. The first could be partially resolved by part of speech tagging, and the second by using a machine learning algorithm on a dataset of spoken Mongolian to train a prediction tool. As Kalaallisut seems to have no homographs, the first will not be an issue for me. They were not clear on how exactly phone duration presented a challenge. They overcame it by using statistical prediction models. Prosody in Mongolian can be predicted with good results from punctuation. They used the CART (classification and regression trees) model, a type of machine learning method developed by \citet{cart} for creating predictions from data, to predict prosodic phrase structure and mark ToBI accents and an F0 contour. However, as there is no version of ToBI specifically for Mongolian, the team used the English model, which could yield incorrect results.\par
 
 		They created the system using Festival and tested it for intelligibility and naturalness on native speakers. The system performed well on measures of intelligibility in most cases, but was not considered particularly natural. Neither, however, was it particularly unnatural. \par
 
@@ -187,33 +187,35 @@ The words are then recorded by either one speaker, or one male and one female sp
 
 	\subsection{Rules for Conversion of Orthography into Phones}
 
-	The orthography of Kalaallisut was standardized in 1972 and 1973, and is the end of a chain of linguist-created orthographies, according to \citet{rischel}. As such, the phonetic value of a grapheme can be determined from the grapheme and its immediate neighbors, with no ambiguity; the orthography is phonetic. Therefore, a list of handwritten rules for converting the orthographic representation into a phonetic representation is all that is necessary. The handwritten rules can then be turned into a finite-state transducer using available software packages, such as from Google. For an example of a method for turning orthographic Kalaallisut into a system that can be easily read off as diphones, see Appendix C. English summaries of the rules are provided in the table below.\par
+	The orthography of Kalaallisut was standardized in 1972 and 1973, and is the end of a chain of linguist-created orthographies, according to \citet{rischel}. As such, the phonetic value of a grapheme can be determined from the grapheme and its immediate neighbors, with no ambiguity; the orthography is phonetic. Therefore, a list of handwritten rules for converting the orthographic representation into a phonetic representation is all that is necessary. The handwritten rules can then be turned into a finite-state transducer using available software packages, such as from Google. For an example of a method for turning orthographic Kalaallisut into a system that can be easily read off as diphones, see Appendix C. \citet{gov} has also developed a tool which converts orthographic Kalaallisut into IPA. \par
 
-	\begin{tabular}{|c|l|}
-	\hline
-	Grapheme & Rules \\
-	\hline
-	a & /a/ unless preceding $<$rC$>$, in which case uvularized\\
-	i & /i/ in all cases\\
-	e & Uvularized /i/\\
-	u & /u/ in all cases\\
-	o & Uvularized /u/\\
-	f & /f/ in all cases\\
-	g & /x/ when after $<$r$>$ or next to another $<$g$>$, /\textipa{G}/ otherwise\\
-	h & /h/ in all cases\\
-	j & /j/ in all cases\\
-	k & /k/ in all cases\\
-	l & /\textbeltl/ when after $<$r$>$ or next to another $<$l$>$, /l/ otherwise\\
-	m & /m/ in all cases\\
-	n & /\textipa{N}/ if followed by $<$g$>$ or $<$ng$>$, /\textscn/ before $<$r$>$, /n/ otherwise\\
-	p & /p/ in all cases\\
-	q & /q/ in all cases\\
-	r & /\textinvscr/ unless preceding a consonant, in which case uvularizes preceding vowel\\
-	s & Part of the affricate /ts/ if preceded by $<$t$>$, /s/ otherwise\\
-	t & Part of the affricate /ts/ if followed by $<$s$>$, /t/ otherwise\\
-	v & /v/ in all cases\\
-	\hline
-	\end{tabular}
+	%English summaries of the rules are provided in the table below.\par
+
+	% \begin{tabular}{|c|l|}
+	% \hline
+	% Grapheme & Rules \\
+	% \hline
+	% a & /a/ unless preceding $<$rC$>$, in which case uvularized\\
+	% i & /i/ in all cases\\
+	% e & Uvularized /i/\\
+	% u & /u/ in all cases\\
+	% o & Uvularized /u/\\
+	% f & /f/ in all cases\\
+	% g & /x/ when after $<$r$>$ or next to another $<$g$>$, /\textipa{G}/ otherwise\\
+	% h & /h/ in all cases\\
+	% j & /j/ in all cases\\
+	% k & /k/ in all cases\\
+	% l & /\textbeltl/ when after $<$r$>$ or next to another $<$l$>$, /l/ otherwise\\
+	% m & /m/ in all cases\\
+	% n & /\textipa{N}/ if followed by $<$g$>$ or $<$ng$>$, /\textscn/ before $<$r$>$, /n/ otherwise\\
+	% p & /p/ in all cases\\
+	% q & /q/ in all cases\\
+	% r & /\textinvscr/ unless preceding a consonant, in which case uvularizes preceding vowel\\
+	% s & Part of the affricate /ts/ if preceded by $<$t$>$, /s/ otherwise\\
+	% t & Part of the affricate /ts/ if followed by $<$s$>$, /t/ otherwise\\
+	% v & /v/ in all cases\\
+	% \hline
+	% \end{tabular}
 
 	\subsection{Non-standard Words and Loanwords}
 
