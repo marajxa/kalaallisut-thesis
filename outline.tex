@@ -89,7 +89,7 @@ Speech synthesis has many commercial applications. GPS voices, personal assistan
 
 	Formant synthesis constructs artificial waveforms using mathematical models. Each waveform, representing acoustic speech, is made of a number of formants, which indicate the pitches of speech at some point in time. Values of the relevant formants are calculated based on the phone and its environment. The benefits of this method include that it does not require storage for recorded human speech segments. However, at this time it sounds unnatural and sometimes unintelligible. HMM(hidden Markov models)-based synthesis, or Statistical Parametric Synthesis, attempts to improve on formant synthesis by using hidden Markov models to determine the most likely frequency spectrum, fundamental frequency, and duration of speech.\footnote{A hidden Markov model is a finite state machine which uses an observation state at time $t$ to find the likelihoods of all possible results, and select the result with the greatest likelihood. For more information see \citet{hmm}.} More information on HMM-based synthesis can be found in \citet{hmm_intro}. Concatenative synthesis, unlike articulatory, formant, and HMM-based synthesis, uses segments of natural human speech strung end to end, and thus achieves a much higher naturalness, at the cost of requiring a not insignificant amount of storage. \par
 
-	\clearpage
+	%\clearpage
 
 	\subsection{Diphone Synthesis}
 
@@ -332,7 +332,7 @@ Previous work on text to speech systems has been done primarily by engineers and
 
 \section{Diphone set and recording environments}
 
-	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while the phonemes are written according to the IPA. The symbol $\varnothing$ indicates a boundary. The relevant part of each recording environment is bolded. The glosses are originally from \citet{west_dict}, transcribed into the modern orthography and digitized by \citet{gov}. \par
+	I have presented the phones in the below table in a phonemic way for pairs in which the phonetic realization of the phoneme is entirely dependent on the other phone in the diphone. The word given for a recording environment is written orthographically, while the phonemes are written according to the IPA. The symbol $\varnothing$ indicates a word boundary. The relevant part of each recording environment is bolded. The glosses are originally from \citet{west_dict}, transcribed into the modern orthography and digitized by \citet{gov}. \par
 
 	\begin{centering}
 	\begin{tabular}{|c|c|l|}
@@ -532,7 +532,7 @@ Previous work on text to speech systems has been done primarily by engineers and
 	\hline
 	\end{tabular}
 	\newpage
-	The triphones are in the table below. All instances of /Vr/ are those found in the structure /VrC/, and thus cannot form a boundary. \par
+	The triphones are in the table below. All instances of /Vr/ are those found in the structure /VrC/, and thus cannot be found at a word boundary. \par
 
 	\begin{tabular}{|c|c|l|}
 	\hline
